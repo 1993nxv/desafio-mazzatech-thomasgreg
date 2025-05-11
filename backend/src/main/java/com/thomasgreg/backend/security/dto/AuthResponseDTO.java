@@ -2,6 +2,9 @@ package com.thomasgreg.backend.security.dto;
 
 import java.util.List;
 
+import lombok.Getter;
+
+@Getter
 public class AuthResponseDTO {
 
     private String accessToken;
@@ -15,6 +18,7 @@ public class AuthResponseDTO {
         this.user = user;
     }
 
+    @Getter
     public static class UserInfo {
         private String username;
         private List<String> roles;
@@ -24,28 +28,6 @@ public class AuthResponseDTO {
             this.roles = roles;
         }
 
-        public String getUsername() {
-            return username;
-        }
-
-        public List<String> getRoles() {
-            return roles;
-        }
     }
 
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public String getTokenType() {
-        return tokenType;
-    }
-
-    public long getExpiresIn() {
-        return expiresIn;
-    }
-
-    public UserInfo getUser() {
-        return user;
-    }
 }
