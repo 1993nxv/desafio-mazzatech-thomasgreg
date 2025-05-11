@@ -1,0 +1,87 @@
+### Geral ###
+*.log
+*.swp
+*.bak
+.DS_Store
+.idea/
+*.iml
+*.ipr
+*.iws
+*.orig
+Thumbs.db
+.env
+*.classpath
+*.project
+.settings/
+.vscode/
+*.cache
+*.diff
+*.patch
+*.tmp
+*.seed
+*.pid
+*.pid.lock
+
+### Backend (Spring Boot) ###
+backend/target/
+backend/.gradle/
+backend/bin/
+backend/.settings/
+backend/.classpath
+backend/.project
+backend/*.jar
+backend/*.war
+backend/*.ear
+backend/logs/
+backend/.springBeans
+backend/dependency-reduced-pom.xml
+backend/*-exec.jar
+backend/application.properties.local
+backend/application-dev.properties
+
+### Frontend (JSF/PrimeFaces) ###
+frontend/target/
+frontend/.gradle/
+frontend/bin/
+frontend/.settings/
+frontend/.classpath
+frontend/.project
+frontend/nbproject/
+frontend/build/
+frontend/node_modules/
+frontend/.metadata/
+frontend/out/
+frontend/.idea/
+frontend/*.war
+frontend/logs/
+frontend/.cache/
+
+### Banco de Dados ###
+*.db
+*.sqlite
+*.h2.db
+
+### Arquivos de IDE ###
+# NetBeans
+**/nbproject/private/
+
+# Eclipse
+**/.metadata/
+**/*.bak
+
+# IntelliJ
+**/out/
+**/*.iws
+
+### Sistemas Operacionais ###
+# Windows
+[Tt]humbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
