@@ -61,6 +61,11 @@ public class ClienteService {
         return clienteSalvo;
     }
 
+    public Long saveClienteProcedure(Cliente cliente) {
+        verificarEmailExistente(cliente.getEmail());
+        return clienteRepository.saveClienteProcedure(cliente);
+    }
+
     @Transactional
     public Logradouro saveLogradouro(Long clienteId, Logradouro logradouro) {
         Cliente cliente = findById(clienteId);

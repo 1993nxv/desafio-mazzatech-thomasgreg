@@ -84,7 +84,8 @@ public class ClienteController {
             clienteRequest.setLogotipo(logotipoRequest);
         }
          
-        Long novoClienteId = clienteService.save(clienteRequest).getId();
+        // Long novoClienteId = clienteService.save(clienteRequest).getId();
+        Long novoClienteId = clienteService.saveClienteProcedure(clienteRequest);
         return ResponseEntity.created(URI.create("/clientes/" + novoClienteId)).build();
     }
 

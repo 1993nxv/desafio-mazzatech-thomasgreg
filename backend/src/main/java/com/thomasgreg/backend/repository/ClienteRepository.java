@@ -8,8 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.thomasgreg.backend.model.Cliente;
+import com.thomasgreg.backend.repository.custom.ClienteRepositoryCustom;
 
-public interface ClienteRepository extends JpaRepository<Cliente, Long> {
+public interface ClienteRepository extends JpaRepository<Cliente, Long>, ClienteRepositoryCustom {
 
     @SuppressWarnings("null")
     @Query("SELECT c FROM Cliente c")
