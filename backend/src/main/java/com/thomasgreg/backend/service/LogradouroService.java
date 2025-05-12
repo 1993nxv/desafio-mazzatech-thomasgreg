@@ -54,6 +54,13 @@ public class LogradouroService {
         };
     }
 
+    @Transactional
+    public void deleteById(Long logradouroId, Cliente cliente) {
+        Logradouro logradouro = findById(logradouroId);
+        verificarLogradouroExistenteEpertenceAoCliente(cliente, logradouro);
+        logradouroRepository.deleteById(logradouroId);
+    }
+
     private void verificarLogradouroExistenteEpertenceAoCliente(Cliente cliente, Logradouro logradouro) {
         Long idClienteLogradouroAtual = findById(logradouro.getId()).getCliente().getId();
         if (!idClienteLogradouroAtual.equals(cliente.getId())) {

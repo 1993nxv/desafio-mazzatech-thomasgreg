@@ -123,4 +123,10 @@ public class ClienteController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/{clienteId}/logradouro/{logradouroId}")
+    public ResponseEntity<?> deleteLogradouroById(@PathVariable Long clienteId, @PathVariable Long logradouroId) {
+        clienteService.deleteLogradouroById(clienteId, logradouroId);
+        return ResponseEntity.noContent().build();
+    }
+
 }

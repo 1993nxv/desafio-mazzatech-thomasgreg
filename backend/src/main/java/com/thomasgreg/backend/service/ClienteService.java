@@ -93,6 +93,12 @@ public class ClienteService {
         clienteRepository.deleteById(id);
     }
 
+    @Transactional
+    public void deleteLogradouroById(Long clienteId, Long logradouroId) {
+        Cliente cliente = findById(clienteId);
+        logradouroService.deleteById(logradouroId, cliente);
+    }
+
     public void verificarEmailExistente(String email) {
         if (clienteRepository.existsByEmail(email)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe um cliente cadastrado com este e-mail");
