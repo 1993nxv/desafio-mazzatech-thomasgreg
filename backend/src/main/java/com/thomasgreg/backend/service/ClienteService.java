@@ -62,6 +62,13 @@ public class ClienteService {
     }
 
     @Transactional
+    public Logradouro saveLogradouro(Long clienteId, Logradouro logradouro) {
+        Cliente cliente = findById(clienteId);
+        logradouro.setCliente(cliente);
+        return logradouroService.save(logradouro);
+    }
+
+    @Transactional
     public void updateById(Long id, Cliente cliente) {
         Cliente clienteAtual = findById(id);
         cliente.setId(id);

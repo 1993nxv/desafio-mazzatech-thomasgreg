@@ -28,6 +28,11 @@ public class LogradouroService {
     }
 
     @Transactional
+    public Logradouro save(Logradouro logradouro) {
+        return logradouroRepository.save(logradouro);
+    }
+
+    @Transactional
     public List<Logradouro> saveAll(List<Logradouro> logradouros, Cliente cliente) {
         logradouros.forEach(
             logradouro -> logradouro.setCliente(cliente)
@@ -55,5 +60,5 @@ public class LogradouroService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Logradouro com o id:"+logradouro.getId()+" não pertence ao cliente com o id:"+cliente.getId());
         }
     }
-    
+   
 }

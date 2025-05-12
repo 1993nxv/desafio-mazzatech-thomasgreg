@@ -3,6 +3,8 @@ package com.thomasgreg.backend.controller;
 import java.io.IOException;
 import java.net.URI;
 
+import javax.validation.Valid;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,7 +27,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thomasgreg.backend.model.Cliente;
 import com.thomasgreg.backend.model.Logotipo;
+import com.thomasgreg.backend.model.Logradouro;
 import com.thomasgreg.backend.model.dto.request.ClienteRequestDTO;
+import com.thomasgreg.backend.model.dto.request.LogradouroRequestDTO;
 import com.thomasgreg.backend.model.dto.response.ClienteLogotipoResponseDTO;
 import com.thomasgreg.backend.model.dto.response.ClienteResponseDTO;
 import com.thomasgreg.backend.service.ClienteService;
@@ -84,8 +88,15 @@ public class ClienteController {
         return ResponseEntity.created(URI.create("/clientes/" + novoClienteId)).build();
     }
 
+    @PostMapping("/{clienteId}/logradouro")
+    public ResponseEntity<?> saveLogradouro(@PathVariable Long clienteId, @Valid @RequestBody LogradouroRequestDTO logradouroRequest) {
+        Logradouro logradouro = modelMapper.map(logradouroRequest, Logradouro.class);
+        clienteService.saveLogradouro(clienteId, logradouro).getId();
+        return ResponseEntity.created(URI.create("/clientes/"+clienteId)).build();
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateById(@PathVariable Long id, @RequestBody ClienteRequestDTO clienteRequest) {
+    public ResponseEntity<?> updateById(@PathVariable Long id, @Valid @RequestBody ClienteRequestDTO clienteRequest) {
         Cliente cliente = modelMapper.map(clienteRequest, Cliente.class);
         clienteService.updateById(id, cliente);
         return ResponseEntity.noContent().build();
