@@ -39,6 +39,11 @@ public class ClienteService {
         return cliente;
     }
 
+    public Logotipo findLogotipoByClienteId(Long clienteId) {
+        findById(clienteId);
+        return logotipoService.findByClienteId(clienteId);
+    }
+
     @Transactional
     public Cliente save(Cliente cliente) {
         verificarEmailExistente(cliente.getEmail());

@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thomasgreg.backend.model.Cliente;
 import com.thomasgreg.backend.model.Logotipo;
+import com.thomasgreg.backend.model.dto.response.ClienteLogotipoResponseDTO;
 import com.thomasgreg.backend.model.dto.response.ClienteResponseDTO;
 import com.thomasgreg.backend.service.ClienteService;
 
@@ -55,6 +56,11 @@ public class ClienteController {
     public ResponseEntity<ClienteResponseDTO> findById(@PathVariable Long id) {
         Cliente cliente = clienteService.findById(id);
         return ResponseEntity.ok().body(modelMapper.map(cliente, ClienteResponseDTO.class));
+    }
+
+    @GetMapping("/{clienteId}/logotipo")
+    public ClienteLogotipoResponseDTO findLogotipoByClienteId(@PathVariable Long clienteId) {
+        return modelMapper.map(clienteService.findLogotipoByClienteId(clienteId), ClienteLogotipoResponseDTO.class);
     }
     
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
