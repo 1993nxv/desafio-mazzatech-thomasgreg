@@ -5,6 +5,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,6 +34,26 @@ public class LogradouroService {
         );
         List<Logradouro> logradourosSalvos = logradouroRepository.saveAll(logradouros);
         return logradourosSalvos;
+    }
+
+    @Modifying
+    @Transactional
+    public void updateAllById(List<Logradouro> logradouros, Cliente cliente) {
+        if(!logradouros.isEmpty()){
+            logradouros.forEach(
+                logradouro -> { 
+                logradouro.setCliente(cliente);
+                verificarLogradouroExistenteEpertenceAoCliente(cliente, logradouro);
+            });
+            logradouroRepository.saveAll(logradouros);
+        };
+    }
+
+    private void verificarLogradouroExistenteEpertenceAoCliente(Cliente cliente, Logradouro logradouro) {
+        Long idClienteLogradouroAtual = findById(logradouro.getId()).getCliente().getId();
+        if (!idClienteLogradouroAtual.equals(cliente.getId())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Logradouro com o id:"+logradouro.getId()+" não pertence ao cliente com o id:"+cliente.getId());
+        }
     }
     
 }

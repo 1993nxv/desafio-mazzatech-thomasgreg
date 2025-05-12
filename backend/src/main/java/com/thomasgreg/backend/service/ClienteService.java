@@ -61,6 +61,20 @@ public class ClienteService {
         return clienteSalvo;
     }
 
+    @Transactional
+    public void updateById(Long id, Cliente cliente) {
+        Cliente clienteAtual = findById(id);
+        cliente.setId(id);
+        if(!cliente.getEmail().equals(clienteAtual.getEmail())) {
+            verificarEmailExistente(cliente.getEmail());
+        }
+
+        List<Logradouro> logradouros = cliente.getLogradouros();
+
+        clienteRepository.updateById(id, cliente.getNome(), cliente.getEmail());
+        logradouroService.updateAllById(logradouros, cliente);
+    }
+
     public void verificarEmailExistente(String email) {
         if (clienteRepository.existsByEmail(email)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe um cliente cadastrado com este e-mail");
