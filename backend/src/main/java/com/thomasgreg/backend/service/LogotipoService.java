@@ -3,7 +3,6 @@ package com.thomasgreg.backend.service;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,7 +30,6 @@ public class LogotipoService {
         logotipoRepository.save(logotipo);
     }
 
-    @Modifying
     @Transactional
     public void updateByClienteId(Long clienteId, Logotipo logotipo) {
         findByClienteId(clienteId);
