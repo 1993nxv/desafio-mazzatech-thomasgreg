@@ -13,4 +13,6 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     @Query("SELECT c FROM Cliente c")
     Page<Cliente> findAll(Pageable pageable);
 
+    boolean existsByEmail(String email);
+
 }
