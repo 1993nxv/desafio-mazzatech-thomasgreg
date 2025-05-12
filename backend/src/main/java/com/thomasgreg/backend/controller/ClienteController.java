@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -87,6 +88,12 @@ public class ClienteController {
     public ResponseEntity<?> updateById(@PathVariable Long id, @RequestBody ClienteRequestDTO clienteRequest) {
         Cliente cliente = modelMapper.map(clienteRequest, Cliente.class);
         clienteService.updateById(id, cliente);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable Long id) {
+        clienteService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 

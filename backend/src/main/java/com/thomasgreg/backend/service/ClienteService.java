@@ -75,6 +75,12 @@ public class ClienteService {
         logradouroService.updateAllById(logradouros, cliente);
     }
 
+    @Transactional
+    public void deleteById(Long id) {
+        findById(id);
+        clienteRepository.deleteById(id);
+    }
+
     public void verificarEmailExistente(String email) {
         if (clienteRepository.existsByEmail(email)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe um cliente cadastrado com este e-mail");
