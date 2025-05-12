@@ -76,6 +76,11 @@ public class ClienteService {
     }
 
     @Transactional
+    public void updateLogotipoByClienteId(Logotipo logotipo, Long clienteId) {
+        logotipoService.updateByClienteId(clienteId, logotipo);
+    }
+
+    @Transactional
     public void deleteById(Long id) {
         findById(id);
         clienteRepository.deleteById(id);

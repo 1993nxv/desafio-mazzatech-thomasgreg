@@ -91,6 +91,21 @@ public class ClienteController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping(path = "/{clienteId}/logotipo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateLogotipoByClienteId(
+            @PathVariable Long clienteId,
+            @RequestPart(name = "logotipo", required = true) MultipartFile logotipoRequest) throws IOException {
+        
+        Logotipo logotipo = new Logotipo();
+        if (logotipoRequest != null) {
+            logotipo.setLogotipo(logotipoRequest.getBytes());
+            logotipo.setTipoArquivo(logotipoRequest.getContentType());
+        }
+
+        clienteService.updateLogotipoByClienteId(logotipo, clienteId);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
         clienteService.deleteById(id);
