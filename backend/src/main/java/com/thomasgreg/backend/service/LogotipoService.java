@@ -18,7 +18,7 @@ public class LogotipoService {
     private LogotipoRepository logotipoRepository;
 
     public Logotipo findByClienteId(Long clienteId) {
-        Logotipo logotipo = logotipoRepository.findById(clienteId).orElseThrow(
+        Logotipo logotipo = logotipoRepository.findByClienteId(clienteId).orElseThrow(
             () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Logotipo do cliente com o id:"+clienteId+" não encontrado")
         );
         return logotipo;
