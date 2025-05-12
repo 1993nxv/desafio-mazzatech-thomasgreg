@@ -69,11 +69,11 @@ public class ClienteController {
             @RequestPart(name = "logotipo", required = false) MultipartFile logotipo) throws IOException {
 
         Cliente clienteRequest = mapper.readValue(clienteJson,  Cliente.class);
-        Logotipo logotipoResquest = new Logotipo();
+        Logotipo logotipoRequest = new Logotipo();
         if (logotipo != null) {
-            logotipoResquest.setLogotipo(logotipo.getBytes());
-            logotipoResquest.setTipoArquivo(logotipo.getContentType());
-            clienteRequest.setLogotipo(logotipoResquest);
+            logotipoRequest.setLogotipo(logotipo.getBytes());
+            logotipoRequest.setTipoArquivo(logotipo.getContentType());
+            clienteRequest.setLogotipo(logotipoRequest);
         }
          
         Long novoClienteId = clienteService.save(clienteRequest).getId();
