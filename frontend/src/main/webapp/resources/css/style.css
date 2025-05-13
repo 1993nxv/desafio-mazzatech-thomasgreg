@@ -1,0 +1,22 @@
+@charset "UTF-8";
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+footer {
+	position: absolute;
+	text-align: center;
+	bottom: 5px;
+	width: 100%;
+}
+
+#usuario-logado {
+	position: absolute;
+	text-align: right;
+	right: 20px;
+	top: 25px;
+	display: inline-block;
+}

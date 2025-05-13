@@ -8,6 +8,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 
 import org.jboss.logging.Logger;
 
@@ -28,16 +30,16 @@ public class LoginService {
             Response response = target
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(authRequestDTO, MediaType.APPLICATION_JSON));
-
-            logger.info("Resposta da API: HTTP " + response.getStatus());
             
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            	FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO, "Login realizado com sucesso", "Seja bem vindo!"));
                 return response.readEntity(AuthResponseDTO.class);
             } else {
-                String errorResponse = response.readEntity(String.class);
-                logger.debug("Erro na API: " + errorResponse);
-                throw new RuntimeException("API retornou erro: " + response.getStatus() + " - " + errorResponse);
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Login inválido", "Usuário ou senha incorretos."));
             }
+            return null;
         } catch (Exception e) {
             logger.debug("Erro na comunicação com a API: " + e.getMessage());
             throw new RuntimeException("Falha na autenticação: " + e.getMessage(), e);

@@ -1,9 +1,9 @@
 package com.thomasgreg.controller;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -40,15 +40,34 @@ public class LoginController implements Serializable {
                 usuario.setUsername(authResponse.getUser().getUsername());
                 usuario.setRoles(authResponse.getUser().getRoles());
                 
-//                return "gerenciar?faces-redirect=true";
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_INFO, "Login realizado com sucesso", "Seja bem vindo "+usuario.getUsername()));
-                return null;
+                try {
+	                FacesContext.getCurrentInstance()
+	                	.getExternalContext().redirect("/frontend/pages/gestao/index.xhtml");
+	                return "";
+                } catch (Exception e) {
+                	return "";
+				}
             } else {
-                FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Login inválido", "Usuário ou senha incorretos."));
                 return null;
             }
+    }
+    
+    public void logout() throws IOException {
+    	FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+    	FacesContext.getCurrentInstance()
+    		.getExternalContext().redirect("/frontend/");
+    }
+    
+    public boolean existeUsuarioLogado() {
+    	return this.usuario.getUsername() != null;
+    }
+    
+    public Usuario getUsuario() {
+    	return this.usuario;
+    }
+    
+    public TokenManager getTokenManager() {
+    	return this.tokenManager;
     }
 
     public AuthRequestDTO getAuthRequest() {
@@ -58,4 +77,5 @@ public class LoginController implements Serializable {
     public void setAuthRequest(AuthRequestDTO authRequest) {
         this.authRequest = authRequest;
     }
+    
 }
