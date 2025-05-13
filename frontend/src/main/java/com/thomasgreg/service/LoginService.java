@@ -7,14 +7,15 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
+
 import org.jboss.logging.Logger;
 
 import com.thomasgreg.config.AppConfig;
 import com.thomasgreg.dto.AuthRequestDTO;
 import com.thomasgreg.dto.AuthResponseDTO;
 
-@ApplicationScoped
+@RequestScoped
 public class LoginService {
     
     private static final Logger logger = Logger.getLogger(LoginService.class.getName());

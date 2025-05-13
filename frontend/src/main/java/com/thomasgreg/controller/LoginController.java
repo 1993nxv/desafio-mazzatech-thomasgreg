@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.thomasgreg.auth.TokenManager;
+import com.thomasgreg.auth.Usuario;
 import com.thomasgreg.dto.AuthRequestDTO;
 import com.thomasgreg.dto.AuthResponseDTO;
 import com.thomasgreg.service.LoginService;
@@ -27,13 +28,22 @@ public class LoginController implements Serializable {
     
     @Inject
     private TokenManager tokenManager;
+    
+    @Inject
+    private Usuario usuario;
 
     public String login() {
             authResponse = loginService.autenticar(authRequest);
             if (authResponse != null && authResponse.getAccessToken() != null) {
                 tokenManager.storeToken(authResponse.getAccessToken());
-                System.out.println(authResponse.toString());
-                return "gerenciar?faces-redirect=true";
+                
+                usuario.setUsername(authResponse.getUser().getUsername());
+                usuario.setRoles(authResponse.getUser().getRoles());
+                
+//                return "gerenciar?faces-redirect=true";
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO, "Login realizado com sucesso", "Seja bem vindo "+usuario.getUsername()));
+                return null;
             } else {
                 FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Login inválido", "Usuário ou senha incorretos."));
