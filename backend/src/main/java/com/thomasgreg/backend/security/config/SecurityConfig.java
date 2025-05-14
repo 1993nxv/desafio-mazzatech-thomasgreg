@@ -30,6 +30,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .antMatchers("/clientes/*/logotipo").permitAll()
                 .antMatchers("/auth").permitAll()
                 .antMatchers("/docs").permitAll()
                 .antMatchers("/swagger-ui/**").permitAll()

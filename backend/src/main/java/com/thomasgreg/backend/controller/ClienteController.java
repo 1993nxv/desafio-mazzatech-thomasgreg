@@ -30,7 +30,6 @@ import com.thomasgreg.backend.model.Logotipo;
 import com.thomasgreg.backend.model.Logradouro;
 import com.thomasgreg.backend.model.dto.request.ClienteRequestDTO;
 import com.thomasgreg.backend.model.dto.request.LogradouroRequestDTO;
-import com.thomasgreg.backend.model.dto.response.ClienteLogotipoResponseDTO;
 import com.thomasgreg.backend.model.dto.response.ClienteResponseDTO;
 import com.thomasgreg.backend.service.ClienteService;
 
@@ -67,8 +66,12 @@ public class ClienteController {
     }
 
     @GetMapping("/{clienteId}/logotipo")
-    public ClienteLogotipoResponseDTO findLogotipoByClienteId(@PathVariable Long clienteId) {
-        return modelMapper.map(clienteService.findLogotipoByClienteId(clienteId), ClienteLogotipoResponseDTO.class);
+    public ResponseEntity<byte[]> findLogotipoByClienteId(@PathVariable Long clienteId) {
+        Logotipo logotipo = clienteService.findLogotipoByClienteId(clienteId);
+
+        return ResponseEntity.ok()
+            .contentType(MediaType.parseMediaType(logotipo.getTipoArquivo()))
+            .body(logotipo.getLogotipo());
     }
     
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
