@@ -9,10 +9,169 @@
 <ui:define name="titulo"> 
 
 	</ui:define>
+	
+	<f:metadata>
+        <f:viewAction action="#{gestaoController.onPageLoad()}"/>
+    </f:metadata>
 
 	<ui:define name="conteudo">
 	
-		<h2>Gestão de clientes</h2>  
+		<div class="card crud">
+		    <h:form id="form">
+		        <p:growl id="messages" showDetail="true" />
+		
+		        <p:toolbar style="width: 80%; max-width: 1300px; margin: 0 auto; margin-top:50px;">
+		            <p:toolbarGroup>
+		                <p:commandButton value="Novo Cliente" icon="pi pi-plus" actionListener="#{clienteView.openNew}"
+		                    update=":dialogs:manage-cliente-content" oncomplete="PF('manageClienteDialog').show()"
+		                    styleClass="ui-button-success" style="margin-right: .5rem">
+		                    <p:resetInput target=":dialogs:manage-cliente-content" />
+		                </p:commandButton>
+		            </p:toolbarGroup>
+		        </p:toolbar>
+		
+		        <p:dataTable style="width: 80%; max-width: 1300px; margin: 0 auto; margin-top:10px;" id="dt-clientes" widgetVar="dtClientes" var="cliente" value="#{[
+    {
+        'id':1, 
+        'nome':'João Silva', 
+        'email':'joao@empresa.com', 
+        'enderecos': [
+            'Rua das Flores, 123 - São Paulo/SP',
+            'Avenida Paulista, 1001 - São Paulo/SP'
+        ],
+        'logo':'avatar1', 
+        'tipo':'PF', 
+        'ativo':true
+    },
+    {
+        'id':2, 
+        'nome':'Maria Oliveira', 
+        'email':'maria@loja.com.br', 
+        'enderecos': [
+            'Av. Brasil, 456 - Rio de Janeiro/RJ',
+            'Rua Copacabana, 200 - Rio de Janeiro/RJ'
+        ],
+        'logo':'avatar2', 
+        'tipo':'PF', 
+        'ativo':true
+    }
+]}"
+		            reflow="true" styleClass="clientes-table" selection="#{clienteView.selectedClientes}"
+		            rowKey="#{cliente['id']}" paginator="true" rows="10" selectionRowMode="add" paginatorPosition="bottom">
+		            <f:facet name="header">
+		                <div class="clientes-table-header">
+		                    <span style="font-weight: bold">Clientes</span>
+		                    <span class="filter-container ui-input-icon-left"> 
+		                        <i class="pi pi-search"></i>
+		                        <p:inputText id="globalFilter" onkeyup="PF('dtClientes').filter()" placeholder="Pesquisar..." />
+		                    </span>
+		                </div>
+		            </f:facet>
+
+		            <p:column width="05%" headerText="id" sortBy="#{cliente.id}">
+		                <h:outputText value="#{cliente.id}" />
+		            </p:column>
+		            
+		            <p:column width="05%" headerText="Logo" exportable="false">
+		                <p:graphicImage name="demo/images/avatar/#{cliente.logo}.png" library="avatares" 
+		                    styleClass="cliente-image" width="60" height="60" />
+		            </p:column>
+		            
+		            <p:column width="20%" headerText="Nome" sortBy="#{cliente.nome}">
+		                <h:outputText value="#{cliente.nome}" />
+		            </p:column>
+		            
+		            <p:column width="25%" headerText="Email" sortBy="#{cliente.email}">
+		                <h:outputText value="#{cliente.email}" />
+		            </p:column>           
+		             
+		            <p:column width="25%" headerText="Endereços" sortBy="#{cliente.enderecos}">
+		                <ui:repeat value="#{cliente.enderecos}" var="endereco" varStatus="status">
+					        <h:outputText value="Endereço #{status.count}: #{endereco}" /><br/>
+					    </ui:repeat>
+		            </p:column>
+		            	            
+		            <p:column width="10%" headerText="Ações" exportable="false" style="width:120px">         
+		                <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-cliente-content"
+		                    oncomplete="PF('manageClienteDialog').show()"
+		                    styleClass="edit-button rounded-button ui-button-success" process="@this">
+		                    
+		                    <f:setPropertyActionListener value="#{cliente}" target="#{clienteView.selectedCliente}" />
+		                    <p:resetInput target=":dialogs:manage-cliente-content" />
+		                </p:commandButton>
+		                
+		                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash"
+		                                 process="@this"
+		                                 oncomplete="PF('deleteClienteDialog').show()">
+		                    <f:setPropertyActionListener value="#{cliente}" target="#{clienteView.selectedCliente}" />
+		                </p:commandButton>
+		            </p:column>
+		        </p:dataTable>
+		    </h:form>
+		
+		    <h:form id="dialogs">
+		        <p:dialog header="Detalhes do Cliente" widgetVar="manageClienteDialog" 
+          modal="true" width="600" responsive="true">
+			    <p:outputPanel id="manage-cliente-content" class="ui-fluid">
+			        <p:outputPanel rendered="#{not empty clienteView.selectedCliente}">
+			            <!-- Dados básicos -->
+			            <div class="field">
+			                <p:outputLabel for="nome">Nome Completo*</p:outputLabel>
+			                <p:inputText id="nome" value="#{clienteView.selectedCliente.nome}" 
+			                            required="true" style="width: 100%"/>
+			            </div>
+			            
+			            <div class="field">
+			                <p:outputLabel for="email">Email*</p:outputLabel>
+			                <p:inputText id="email" value="#{clienteView.selectedCliente.email}" 
+			                            required="true" style="width: 100%"/>
+			            </div>
+			            
+			            <!-- Lista de endereços -->
+			            <div class="field">
+			                <p:outputLabel>Endereços</p:outputLabel>
+			                <p:dataList id="listaEnderecos" value="#{clienteView.selectedCliente.enderecos}" 
+			                           var="endereco" style="width:100%">
+			                    <p:inputText value="#{endereco}" style="width: calc(100% - 30px); margin-bottom:5px"/>
+			                    <p:commandButton icon="pi pi-trash" styleClass="ui-button-danger" 
+			                                    action="#{clienteView.removerEndereco(endereco)}"
+			                                    update="listaEnderecos" immediate="true"/>
+			                </p:dataList>
+			                
+			                <p:commandButton value="Adicionar Endereço" icon="pi pi-plus"
+			                                action="#{clienteView.adicionarEndereco}"
+			                                update="listaEnderecos" styleClass="ui-button-secondary"/>
+			            </div>
+			        </p:outputPanel>
+			    </p:outputPanel>
+			
+			    <f:facet name="footer">
+			        <p:commandButton value="Salvar" icon="pi pi-check" action="#{clienteView.saveCliente}"
+			                        update=":form:dt-clientes, :form:messages" 
+			                        process="manage-cliente-content @this"
+			                        oncomplete="if(!args.validationFailed) PF('manageClienteDialog').hide()"/>
+			        <p:commandButton value="Cancelar" icon="pi pi-times" 
+			                        onclick="PF('manageClienteDialog').hide()"
+			                        class="ui-button-secondary" type="button"/>
+			    </f:facet>
+			</p:dialog>
+		
+		        <p:confirmDialog widgetVar="deleteClienteDialog" showEffect="fade" width="300"
+		            message="Deseja realmente excluir este cliente?" header="Confirmação" severity="warn">
+		            <p:commandButton value="Sim" icon="pi pi-check" actionListener="#{clienteView.deleteCliente}"
+		                process="@this" update=":form:dt-clientes, :form:messages"
+		                oncomplete="PF('deleteClienteDialog').hide()" />
+		            <p:commandButton value="Não" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+		                onclick="PF('deleteClienteDialog').hide()" />
+		        </p:confirmDialog>
+		
+		        <p:confirmDialog global="true" showEffect="fade" width="300">
+		            <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+		            <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+		                icon="pi pi-times" />
+		        </p:confirmDialog>
+		    </h:form>
+		</div>
 		
 	</ui:define>
 

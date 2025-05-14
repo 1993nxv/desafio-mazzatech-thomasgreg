@@ -37,6 +37,17 @@
 	<div id="conteudo">
 		<ui:insert name="conteudo"/>
 	</div>
+	
+	<h:form id="formGlobal">
+    <!-- Componente blockUI -->
+	    <p:blockUI block=":formGlobal" widgetVar="blockUIWidget" 
+		               trigger="@(form)">
+		        <div class="blockui-content">
+		            <p:graphicImage library="primefaces" name="loading.svg" width="64"/>
+		            <h:outputText value="Processando..." style="margin-top:10px;display:block"/>
+		        </div>
+	    </p:blockUI>
+	</h:form>
 	    
 	<footer>
 		© 2025 - Thomas Greg
