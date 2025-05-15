@@ -10,19 +10,16 @@ import javax.inject.Inject;
 @RequestScoped
 public class IndexController {
 
-    @Inject
-    private LoginController loginController;
+	@Inject
+	private LoginController loginController;
 
-    public void onPageLoad() {
-        try {
-        	String redirectPage = loginController.existeUsuarioLogado()
-                    ? "/frontend/pages/gestao/"
-                    : "/frontend/pages/login/login.xhtml";
-            
-            FacesContext.getCurrentInstance().getExternalContext()
-                .redirect(redirectPage);
-        } catch (IOException e) {
-            // Tratar erro de redirecionamento
-        }
-    }
+	public void onPageLoad() {
+		try {
+			String redirectPage = loginController.existeUsuarioLogado() ? "/frontend/pages/gestao/"
+					: "/frontend/pages/login/login.xhtml";
+			FacesContext.getCurrentInstance().getExternalContext().redirect(redirectPage);
+		} catch (IOException e) {
+
+		}
+	}
 }

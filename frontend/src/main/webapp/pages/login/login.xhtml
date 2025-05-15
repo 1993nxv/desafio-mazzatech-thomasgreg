@@ -6,23 +6,28 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/templates/template.xhtml">
 
-<ui:define name="titulo"> 
-
+	<ui:define name="titulo">
+		Auntenticação
 	</ui:define>
 
 	<ui:define name="conteudo">
-	
+
 		<h:form style="width:400px; margin:auto; margin-top:100px;">
-	        <p:panel header="Autenticação" styleClass="ui-panel-dark">
-	            <p:messages showDetail="true" />
-	            <p:inputText style="width:350px; margin: 3px;" value="#{loginController.authRequest.username}" label="Usuário" placeholder="Usuário" />
-	            <p:password style="width:350px; margin: 3px;" value="#{loginController.authRequest.password}" label="Senha" placeholder="Senha" />
+			<p:panel header="Autenticação" styleClass="ui-panel-dark">
+				<p:messages showDetail="true" />
+				<p:inputText style="width:350px; margin: 3px;"
+					value="#{loginController.authRequest.username}" label="Usuário"
+					placeholder="Usuário" />
+				<p:password style="width:350px; margin: 3px;"
+					value="#{loginController.authRequest.password}" label="Senha"
+					placeholder="Senha" />
 				<br></br>
-	            <p:commandButton style="width:350px; margin: 3px;" value="Entrar" icon="pi pi-sign-in"
-	                             action="#{loginController.login}" update="@form"/>
-	        </p:panel>
-	    </h:form>
-		
+				<p:commandButton style="width:350px; margin: 3px;" value="Entrar"
+					icon="pi pi-sign-in" action="#{loginController.login}"
+					update="@form" />
+			</p:panel>
+		</h:form>
+
 	</ui:define>
 
 </ui:composition>
