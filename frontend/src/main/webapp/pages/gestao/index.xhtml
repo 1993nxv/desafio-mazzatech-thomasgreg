@@ -40,6 +40,7 @@
 					selection="#{gestaoController.clienteSelecionado}"
 					rowKey="#{cliente.id}" paginator="true" rows="10"
 					selectionRowMode="add" paginatorPosition="bottom">
+					
 					<f:facet name="header">
 						<div class="clientes-table-header">
 							<span style="font-weight: bold">Clientes</span> <span
@@ -85,7 +86,6 @@
 							oncomplete="PF('manageClienteDialog').show()"
 							styleClass="edit-button rounded-button ui-button-success"
 							process="@this">
-
 							<f:setPropertyActionListener value="#{cliente}"
 								target="#{gestaoController.clienteSelecionado}" />
 							<p:resetInput target=":dialogs:manage-cliente-content" />
@@ -111,14 +111,7 @@
 
 							<div class="field" style="margin-top: 7px; text-align: center;">
 								<ui:fragment
-									rendered="#{not empty gestaoController.previewLogotipo}">
-									<p:graphicImage value="#{gestaoController.previewLogotipo}"
-										width="200" height="auto"
-										style="border-radius: 5px; margin-top:5px" />
-								</ui:fragment>
-
-								<ui:fragment
-									rendered="#{empty gestaoController.previewLogotipo and not empty gestaoController.clienteSelecionado.id}">
+									rendered="#{not empty gestaoController.clienteSelecionado.id}">
 									<h:graphicImage
 										value="#{gestaoController.baseUrl}/clientes/#{gestaoController.clienteSelecionado.id}/logotipo"
 										width="200" height="auto"
@@ -171,7 +164,7 @@
 
 					<f:facet name="footer">
 						<p:commandButton value="Salvar" icon="pi pi-check"
-							action="#{gestaoController.salvarCliente}"
+							action="#{gestaoController.salvarOuAtualizarCliente}"
 							update=":form:dt-clientes, @form, :form:messages"
 							process="manage-cliente-content @this @form"
 							oncomplete="if(!args.validationFailed) PF('manageClienteDialog').hide()" />

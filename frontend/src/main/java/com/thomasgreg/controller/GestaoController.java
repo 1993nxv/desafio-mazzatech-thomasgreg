@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -13,15 +12,11 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.modelmapper.ModelMapper;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
 
 import com.thomasgreg.config.AppConfig;
-import com.thomasgreg.dto.ClienteResponseDTO;
-import com.thomasgreg.model.Cliente;
-import com.thomasgreg.model.Logradouro;
+import com.thomasgreg.dto.ClienteDTO;
+import com.thomasgreg.dto.LogradouroDTO;
 import com.thomasgreg.service.GestaoService;
 
 import lombok.Getter;
@@ -34,12 +29,11 @@ public class GestaoController implements Serializable {
 	private static final long serialVersionUID = -4352995880801340890L;
 	private static final String BASE_URL = AppConfig.get("api.base.url");
 
-	private List<Cliente> clientes;
+	private List<ClienteDTO> clientes;
 
-	private Cliente clienteSelecionado;
+	private ClienteDTO clienteSelecionado;
 
-	@Getter
-	@Setter
+	@Getter @Setter
 	private UploadedFile logotipoUpload;
 
 	@Inject
@@ -48,26 +42,26 @@ public class GestaoController implements Serializable {
 	@Inject
 	private GestaoService gestaoService;
 
-	@Inject
-	private ModelMapper modelMapper;
-
 	@PostConstruct
 	public void init() {
-		try {
-			if (loginController.existeUsuarioLogado()) {
-				listarClientes();
-			} else {
-				FacesContext.getCurrentInstance().getExternalContext().redirect("/frontend/pages/login/login.xhtml");
-			}
-		} catch (IOException e) {
+		if (loginController.existeUsuarioLogado()) {
+			listarClientes();
+		} else {
+			redirecionaParaLogin();
 		}
+	}
+	
+	public void salvarOuAtualizarCliente() {
+	    if (clienteSelecionado.getId() == null) {
+	        salvarCliente();
+	    } else {
+//	        atualizarCliente();
+	    }
 	}
 
 	public void salvarCliente() {
 		try {
 			gestaoService.salvarCliente(clienteSelecionado, logotipoUpload);
-			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Cliente salvo com sucesso!"));
 			listarClientes();
 		} catch (Exception e) {
 			String erro = e.getMessage() != null ? e.getMessage() : "Erro inesperado";
@@ -89,25 +83,25 @@ public class GestaoController implements Serializable {
 		}
 	}
 
-	public List<Cliente> listarClientes() {
-		List<ClienteResponseDTO> dtos = gestaoService.listarClientes();
-		this.clientes = dtos.stream().map(dto -> modelMapper.map(dto, Cliente.class)).collect(Collectors.toList());
+	public List<ClienteDTO> listarClientes() {
+		List<ClienteDTO> clientesResponse = gestaoService.listarClientes();
+		this.clientes = clientesResponse;
 		return clientes;
 	}
 
 	public void novoClienteOpen() {
-		this.clienteSelecionado = new Cliente();
+		this.clienteSelecionado = new ClienteDTO();
 	}
 
-	public List<Cliente> getClientes() {
+	public List<ClienteDTO> getClientes() {
 		return clientes;
 	}
 
-	public Cliente getClienteSelecionado() {
+	public ClienteDTO getClienteSelecionado() {
 		return clienteSelecionado;
 	}
 
-	public void setClienteSelecionado(Cliente cliente) {
+	public void setClienteSelecionado(ClienteDTO cliente) {
 		this.clienteSelecionado = cliente;
 	}
 
@@ -119,32 +113,21 @@ public class GestaoController implements Serializable {
 		if (clienteSelecionado.getLogradouros() == null) {
 			clienteSelecionado.setLogradouros(new ArrayList<>());
 		}
-		Logradouro novoLogradouro = new Logradouro();
+		LogradouroDTO novoLogradouro = new LogradouroDTO();
 		novoLogradouro.setLogradouro("");
 		clienteSelecionado.getLogradouros().add(novoLogradouro);
 	}
 
-	public StreamedContent getPreviewLogotipo() {
-		if (logotipoUpload != null && logotipoUpload.getSize() > 0) {
-			try {
-				return DefaultStreamedContent.builder().name(logotipoUpload.getFileName())
-						.contentType(logotipoUpload.getContentType()).stream(() -> {
-							try {
-								return logotipoUpload.getInputStream();
-							} catch (IOException e) {
-								e.printStackTrace();
-								return null;
-							}
-						}).build();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
-	}
-
 	public String getBaseUrl() {
 		return BASE_URL;
+	}
+
+	private void redirecionaParaLogin() {
+		try {
+			FacesContext.getCurrentInstance().getExternalContext().redirect("/frontend/pages/login/login.xhtml");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

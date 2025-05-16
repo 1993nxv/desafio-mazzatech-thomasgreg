@@ -1,21 +1,20 @@
-package com.thomasgreg.model;
+package com.thomasgreg.auth;
+
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode
-@ToString
-public class Logradouro {
-
-    private Long id;
-    private String logradouro;
+public class AuthRequestDTO {
+	
+	private String username;
+    private String password;
     
 }

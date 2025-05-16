@@ -1,4 +1,5 @@
-package com.thomasgreg.dto;
+package com.thomasgreg.auth;
+
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -11,10 +12,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class LogradouroRequestDTO {
-
-    private Long id;
-    private String logradouro;
-    private ClienteRequestDTO cliente;
-
+public class AuthResponseDTO {
+	
+	private String accessToken;
+    private String tokenType;
+    private int expiresIn;
+    private UsuarioDTO user;
+    
 }

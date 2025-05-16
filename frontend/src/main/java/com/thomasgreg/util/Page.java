@@ -1,4 +1,4 @@
-package com.thomasgreg.dto;
+package com.thomasgreg.util;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class PageResponseDTO<T> {
+public class Page<T> {
     private List<T> content;
     private PageableDTO pageable;
     private boolean last;

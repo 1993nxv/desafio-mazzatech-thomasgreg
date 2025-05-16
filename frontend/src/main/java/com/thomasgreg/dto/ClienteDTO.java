@@ -1,6 +1,5 @@
-package com.thomasgreg.model;
+package com.thomasgreg.dto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -16,12 +15,11 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode
 @ToString
-public class Cliente {
+public class ClienteDTO {
 
     private Long id;
     private String nome;
     private String email;
-    private Logotipo logotipo;
-    private List<Logradouro> logradouros = new ArrayList<>();
+    private List<LogradouroDTO> logradouros;
 
 }

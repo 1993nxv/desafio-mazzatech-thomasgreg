@@ -1,5 +1,4 @@
-package com.thomasgreg.dto;
-
+package com.thomasgreg.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -7,16 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode
-public class AuthResponseDTO {
+public class UsuarioDTO {
 	
-	private String accessToken;
-    private String tokenType;
-    private int expiresIn;
-    private UsuarioDTO user;
+	private String username;
+    private List<String> roles;
     
 }

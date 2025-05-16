@@ -1,6 +1,5 @@
 package com.thomasgreg.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,9 +11,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class AuthRequestDTO {
-	
-	private String username;
-    private String password;
-    
+public class LogradouroDTO {
+
+    private Long id;
+    private String logradouro;
+ 
 }
