@@ -51,7 +51,7 @@ public class GestaoService {
 				.header("Authorization", "Bearer " + tokenManager.getToken())
 				.get();
 		if (response.getStatus() == 200) {
-			return converteResponseEmPageClienteResponseDTO(response);
+			return converteResponseEmPageClienteDTO(response);
 		} else if (response.getStatus() == 500) {
 			loginController.tokenExpirou();
 		} else {
@@ -102,7 +102,7 @@ public class GestaoService {
 
 	private MultipartFormDataOutput montaMultipartData(ClienteDTO cliente, UploadedFile logotipo)
 			throws JsonProcessingException, IOException {
-		String clienteJson = converteClienteRequestEmJson(cliente);
+		String clienteJson = converteClienteEmJson(cliente);
 		MultipartFormDataOutput multipartData = new MultipartFormDataOutput();
 		multipartData.addFormData("cliente", clienteJson, MediaType.APPLICATION_JSON_TYPE);
 		InputStream logotipoInput = logotipo.getInputStream();
@@ -111,20 +111,19 @@ public class GestaoService {
 		return multipartData;
 	}
 
-	private List<ClienteDTO> converteResponseEmPageClienteResponseDTO(Response response) {
+	private List<ClienteDTO> converteResponseEmPageClienteDTO(Response response) {
 		String jsonString = response.readEntity(String.class);
 		ObjectMapper mapper = new ObjectMapper();
 		Page<ClienteDTO> pageResponse = null;
 		try {
-			pageResponse = mapper.readValue(jsonString, new TypeReference<Page<ClienteDTO>>() {
-			});
+			pageResponse = mapper.readValue(jsonString, new TypeReference<Page<ClienteDTO>>() {});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return pageResponse.getContent();
 	}
 
-	private String converteClienteRequestEmJson(ClienteDTO cliente) throws JsonProcessingException {
+	private String converteClienteEmJson(ClienteDTO cliente) throws JsonProcessingException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String clienteJson = objectMapper.writeValueAsString(cliente);
 		return clienteJson;
