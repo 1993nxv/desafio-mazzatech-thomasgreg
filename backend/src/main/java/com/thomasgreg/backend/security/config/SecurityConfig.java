@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .antMatchers("/clientes/*/logotipo").permitAll()
                 .antMatchers("/auth").permitAll()
                 .antMatchers("/docs").permitAll()
+                .antMatchers("/openapi/**").permitAll()
                 .antMatchers("/swagger-ui/**").permitAll()
                 .antMatchers("/v3/api-docs/**").permitAll()
                 .antMatchers("/swagger-resources/**").permitAll()
