@@ -1,5 +1,4 @@
-package com.thomasgreg.auth;
-
+package com.thomasgreg.auth.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -7,14 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode
-public class AuthRequestDTO {
+public class UsuarioDTO {
 	
 	private String username;
-    private String password;
+    private List<String> roles;
     
 }

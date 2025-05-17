@@ -5,99 +5,106 @@ import java.io.InputStream;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataWriter;
 import org.primefaces.model.file.UploadedFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thomasgreg.auth.TokenManager;
-import com.thomasgreg.config.AppConfig;
-import com.thomasgreg.controller.LoginController;
+import com.thomasgreg.auth.controller.LoginController;
+import com.thomasgreg.auth.model.TokenManager;
+import com.thomasgreg.controller.MensagemController;
 import com.thomasgreg.dto.ClienteDTO;
+import com.thomasgreg.http.ClienteHTTP;
 import com.thomasgreg.util.Page;
 
 @RequestScoped
 public class GestaoService {
-
-	private static final String BASE_URL = AppConfig.get("api.base.url");
+	
+	@Inject 
+	private ClienteHTTP clienteHTTP;
+	
+	@Inject
+	private MensagemController msg;
 
 	@Inject
 	private LoginController loginController;
 
 	public List<ClienteDTO> listarClientes() {
-		TokenManager tokenManager = loginController.getTokenManager();
-		Client clienteHTTP = ClientBuilder.newClient();
-		WebTarget target = clienteHTTP
-				.target(BASE_URL)
-				.path("/clientes/")
-				.queryParam("page", 0)
-				.queryParam("size", 100);
-		Response response = target.request(MediaType.APPLICATION_JSON)
-				.header("Authorization", "Bearer " + tokenManager.getToken())
-				.get();
-		if (response.getStatus() == 200) {
-			return converteResponseEmPageClienteDTO(response);
-		} else if (response.getStatus() == 500) {
-			loginController.tokenExpirou();
-		} else {
-			throw new RuntimeException("Backend indisponivel");
-		}
-		return null;
+	    Response response = null;
+	    TokenManager tokenManager = loginController.getTokenManager();
+	    try {
+	        response = clienteHTTP
+	            .target("/clientes/")
+	            .queryParam("page", 0)
+	            .queryParam("size", 100)
+	            .request(MediaType.APPLICATION_JSON)
+	            .header("Authorization", "Bearer " + tokenManager.getToken())
+	            .get();
+	        if (response.getStatus() == 200) {
+	            return converteResponseEmPageClienteDTO(response);
+	        } else if (response.getStatus() == 500) {
+	            loginController.tokenExpirou();
+	        } else {
+	        	msg.addMensagemErro("Erro", "Backend indisponível: HTTP " + response.getStatus());
+	        }
+	    } finally {
+	        response.close();
+	    }
+	    return null;
 	}
 
-	public void salvarCliente(ClienteDTO cliente, UploadedFile logotipo) throws Exception {
-		TokenManager tokenManager = loginController.getTokenManager();
-		MultipartFormDataOutput multipartData = montaMultipartData(cliente, logotipo);
-		ResteasyClient clienteHTTP = new ResteasyClientBuilder()
-				.register(MultipartFormDataWriter.class)
-				.build();
-		ResteasyWebTarget target = clienteHTTP.target(BASE_URL).path("/clientes/");
-		Entity<MultipartFormDataOutput> corpoRequisicao = Entity.entity(multipartData, MediaType.MULTIPART_FORM_DATA);
-		Response response = target
-				.request()
-				.header("Authorization", "Bearer " + tokenManager.getToken())
-				.post(corpoRequisicao);
-		if (response.getStatus() == 409) {
-			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "Já existe um cliente cadastrado com esse email!"));
-		}else if(response.getStatus() == 201) {
-			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Cliente salvo com sucesso!"));
-		}else {
-			String erro = response.readEntity(String.class);
-			throw new RuntimeException("Erro ao salvar cliente: HTTP " + response.getStatus() + " - " + erro);
-		}
+	public void salvarCliente(ClienteDTO cliente, UploadedFile logotipo) {
+	    Response response = null;
+	    TokenManager tokenManager = loginController.getTokenManager();
+	    try {
+		    MultipartFormDataOutput multipart = montaMultipartData(cliente, logotipo);
+		    Entity<MultipartFormDataOutput> corpo = Entity.entity(multipart, MediaType.MULTIPART_FORM_DATA);
+	        response = clienteHTTP
+	            .target("/clientes/")
+	            .request()
+	            .header("Authorization", "Bearer " + tokenManager.getToken())
+	            .post(corpo);
+	        if (response.getStatus() == 201) {
+	            msg.addMensagemInfo("Sucesso", "Cliente salvo com sucesso!");
+	        } else if (response.getStatus() == 409) {
+	            msg.addMensagemAviso("Aviso", "Já existe um cliente cadastrado com esse email!");
+	        } else {
+	            String detalhe = response.hasEntity() ? response.readEntity(String.class) : "";
+                msg.addMensagemErro("Falha", "Erro ao salvar cliente (HTTP " + response.getStatus() + ") " + detalhe);
+	        }
+	    } catch (Exception e) {
+	    	msg.addMensagemErro("Falha", "Erro ao ler arquivo de imagem.");
+		} finally {
+	        response.close();
+	    }
 	}
 
-	public void deletarClientePorId(String clienteId) throws Exception {
-		TokenManager tokenManager = loginController.getTokenManager();
-		ResteasyClient clienteHTTP = new ResteasyClientBuilder().build();
-		ResteasyWebTarget target = clienteHTTP.target(BASE_URL).path("/clientes/" + clienteId);
-		Response response = target
-				.request()
-				.header("Authorization", "Bearer " + tokenManager.getToken())
-				.delete();
-		if (response.getStatus() == 204) {
-		} else if (response.getStatus() == 500) {
-			loginController.tokenExpirou();
-		} else {
-			throw new RuntimeException("Erro ao deletar cliente: HTTP " + response.getStatus());
-		}
+	public void deletarClientePorId(String clienteId) {
+	    Response response = null;
+	    TokenManager tokenManager = loginController.getTokenManager();
+	    try {
+	        response = clienteHTTP
+	                .target("/clientes/{id}")
+	                .resolveTemplate("id", clienteId)
+	                .request()
+	                .header("Authorization", "Bearer " + tokenManager.getToken())
+	                .delete();
+	        if (response.getStatus() == 204) {
+	        	msg.addMensagemInfo("Sucesso", "Cliente excluído com sucesso!");
+	        } else if (response.getStatus() == 500) {
+	            loginController.tokenExpirou();
+	        } else {
+	        	msg.addMensagemErro("Falha", "Erro ao excluir cliente.");
+	        }
+	    } finally {
+	        response.close();
+	    }
 	}
 
 	private MultipartFormDataOutput montaMultipartData(ClienteDTO cliente, UploadedFile logotipo)

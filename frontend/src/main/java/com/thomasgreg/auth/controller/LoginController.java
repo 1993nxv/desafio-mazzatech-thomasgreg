@@ -1,19 +1,22 @@
-package com.thomasgreg.controller;
+package com.thomasgreg.auth.controller;
 
 import java.io.IOException;
 import java.io.Serializable;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.thomasgreg.auth.AuthRequestDTO;
-import com.thomasgreg.auth.AuthResponseDTO;
-import com.thomasgreg.auth.TokenManager;
-import com.thomasgreg.auth.Usuario;
-import com.thomasgreg.service.LoginService;
+import com.thomasgreg.auth.model.TokenManager;
+import com.thomasgreg.auth.model.Usuario;
+import com.thomasgreg.auth.model.dto.AuthRequestDTO;
+import com.thomasgreg.auth.model.dto.AuthResponseDTO;
+import com.thomasgreg.auth.service.LoginService;
+import com.thomasgreg.controller.MensagemController;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Named
 @SessionScoped
@@ -21,16 +24,20 @@ public class LoginController implements Serializable {
 
 	private static final long serialVersionUID = -8749448214470369140L;
 	
+	@Getter
 	private AuthRequestDTO authRequest = new AuthRequestDTO();;
 
-	@Inject
+	@Inject @Getter @Setter
 	private TokenManager tokenManager;
 	
-	@Inject
+	@Inject @Getter @Setter
 	private Usuario usuario;
 
 	@Inject
 	private LoginService loginService;
+	
+    @Inject
+	private MensagemController msg;
 
 	public void login() {
 		AuthResponseDTO authResponse = new AuthResponseDTO();
@@ -39,13 +46,8 @@ public class LoginController implements Serializable {
 			tokenManager.storeToken(authResponse.getAccessToken());
 			usuario.setUsername(authResponse.getUser().getUsername());
 			usuario.setRoles(authResponse.getUser().getRoles());
-			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Login realizado com sucesso", "Seja bem vindo!"));
 			redirecionaParaGestao();
-		}else{
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Login inválido", "Usuário ou senha incorretos."));
-		} 
+		}
 	}
 
 	public void logout() {
@@ -60,8 +62,7 @@ public class LoginController implements Serializable {
 	public void tokenExpirou() {
 		FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
 		redirecionaLogin();
-		FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_WARN, "Atenção", "Você precisa fazer login novamente!"));
+		msg.addMensagemAviso("Atenção","Você precisa fazer login novamente!");
 	}
 
 	public boolean existeUsuarioLogado() {
@@ -82,18 +83,6 @@ public class LoginController implements Serializable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-    public AuthRequestDTO getAuthRequest() {
-        return authRequest;
-    }
-
-    public void setAuthRequest(AuthRequestDTO authRequest) {
-        this.authRequest = authRequest;
-    }
-    
-	public TokenManager getTokenManager() {
-		return tokenManager;
 	}
 
 }

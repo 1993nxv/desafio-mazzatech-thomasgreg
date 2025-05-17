@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -14,6 +13,7 @@ import javax.inject.Named;
 
 import org.primefaces.model.file.UploadedFile;
 
+import com.thomasgreg.auth.controller.LoginController;
 import com.thomasgreg.config.AppConfig;
 import com.thomasgreg.dto.ClienteDTO;
 import com.thomasgreg.dto.LogradouroDTO;
@@ -28,9 +28,11 @@ public class GestaoController implements Serializable {
 
 	private static final long serialVersionUID = -4352995880801340890L;
 	private static final String BASE_URL = AppConfig.get("api.base.url");
-
+	
+	@Getter @Setter
 	private List<ClienteDTO> clientes;
-
+	
+	@Getter @Setter
 	private ClienteDTO clienteSelecionado;
 
 	@Getter @Setter
@@ -60,27 +62,13 @@ public class GestaoController implements Serializable {
 	}
 
 	public void salvarCliente() {
-		try {
-			gestaoService.salvarCliente(clienteSelecionado, logotipoUpload);
-			listarClientes();
-		} catch (Exception e) {
-			String erro = e.getMessage() != null ? e.getMessage() : "Erro inesperado";
-			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao salvar cliente", erro));
-			e.printStackTrace();
-		}
+		gestaoService.salvarCliente(clienteSelecionado, logotipoUpload);
+		listarClientes();
 	}
 
 	public void deletarCliente() {
-		try {
-			gestaoService.deletarClientePorId(clienteSelecionado.getId().toString());
-			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Cliente deletado"));
-			listarClientes();
-		} catch (Exception e) {
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro",
-					"Não foi possível deletar o cliente: " + e.getMessage()));
-		}
+		gestaoService.deletarClientePorId(clienteSelecionado.getId().toString());
+		listarClientes();
 	}
 
 	public List<ClienteDTO> listarClientes() {
@@ -88,21 +76,9 @@ public class GestaoController implements Serializable {
 		this.clientes = clientesResponse;
 		return clientes;
 	}
-
+	
 	public void novoClienteOpen() {
 		this.clienteSelecionado = new ClienteDTO();
-	}
-
-	public List<ClienteDTO> getClientes() {
-		return clientes;
-	}
-
-	public ClienteDTO getClienteSelecionado() {
-		return clienteSelecionado;
-	}
-
-	public void setClienteSelecionado(ClienteDTO cliente) {
-		this.clienteSelecionado = cliente;
 	}
 
 	public void limparSelecao() {
@@ -118,16 +94,16 @@ public class GestaoController implements Serializable {
 		clienteSelecionado.getLogradouros().add(novoLogradouro);
 	}
 
-	public String getBaseUrl() {
-		return BASE_URL;
-	}
-
 	private void redirecionaParaLogin() {
 		try {
 			FacesContext.getCurrentInstance().getExternalContext().redirect("/frontend/pages/login/login.xhtml");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public String getBaseUrl() {
+		return BASE_URL;
 	}
 
 }

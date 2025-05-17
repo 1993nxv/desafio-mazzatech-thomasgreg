@@ -1,4 +1,4 @@
-package com.thomasgreg.auth;
+package com.thomasgreg.auth.model.dto;
 
 
 import lombok.AllArgsConstructor;
